@@ -2,7 +2,23 @@
 
 namespace App\Entity;
 
+namespace App\Entity;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class Participant
+{
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'Your first name must be at least {{ limit }} characters long',
+        maxMessage: 'Your first name cannot be longer than {{ limit }} characters',
+    )]
+    protected string $firstName;
+}
+
 use App\Repository\IngredientRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
@@ -17,9 +33,13 @@ class Ingredient
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Assert\Positive()]
+    #[Assert\LessThan(200)]
+    #[Assert\NotNull()]
     private ?float $price = null;
 
     #[ORM\Column]
+    #[Assert\NotNull()]
     private ?\DateTimeImmutable $createAt = null;
 
     public function getId(): ?int
@@ -61,5 +81,9 @@ class Ingredient
         $this->createAt = $createAt;
 
         return $this;
+    }
+    public function __construct()
+    {
+        $this->createAt = new DateTimeImmutable();
     }
 }
