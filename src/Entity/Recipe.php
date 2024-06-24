@@ -2,16 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\RecipeetRepository;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Ingredient;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\RecipeetRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
-
 
 #[ORM\Entity(repositoryClass: RecipeetRepository::class)]
 #[UniqueEntity('name')]
@@ -27,32 +26,29 @@ class Recipe
     #[Assert\Length(
         min: 2,
         max: 50,
-        minMessage: '',
-        maxMessage:''
+        minMessage: 'Le nom doit au moins avoir 2 caractères',
+        maxMessage: "Le nom doit avoir au maximum 50 charactères",
     )]
-    private ?string $name= null;
+    private ?string $name = null;
 
     #[ORM\Column]
     #[Assert\Positive()]
     #[Assert\LessThan(1441)]
-    private ?int $time= null;
+    private ?int $time = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\Positive()]
     #[Assert\LessThan(51)]
-    private ?int $nbPeople = null;
+    private ?int $nb_people = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\Positive()]
     #[Assert\LessThan(6)]
     private ?int $difficulty = null;
 
-
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank()]
-    private ?string $description = null;   
-
-
+    private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
     #[Assert\Positive()]
@@ -60,32 +56,31 @@ class Recipe
     private ?float $price = null;
 
     #[ORM\Column]
-    private ?bool $isFavorite = null;
+    private ?bool $is_favorite = false;
 
     #[ORM\Column]
-    #[Assert\notNull()]
-    private ?\DateTimeImmutable $createAt = null;
+    #[Assert\NotNull()]
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Assert\notNull()]
-    private ?\DateTimeImmutable $updateAt = null;
+    #[Assert\NotNull()]
+    private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToMany(targetEntity: Ingredient::class)]
-    private Collection  $ingredients;
+        #[ORM\ManyToMany(targetEntity: Ingredient::class)]
+    private Collection $ingredients;
 
-    
-    #[ORM\PrePersist]
-    public function setCreateAtValue(): void
-    {
-        $this->createAt = new \DateTimeImmutable();
+        #[ORM\ManyToOne(inversedBy: 'recipes')]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?User $user = null; 
+    public function __construct() {
+        $this->ingredients = new ArrayCollection();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable(); 
     }
 
-
-    public function __construct()
-    {
-        $this->ingredients= new ArrayCollection();
-        $this->createAt= new DateTimeImmutable();
-        $this->updateAt= new DateTimeImmutable();
+    #[ORM\PrePersist]
+    public function setUpdatesAtValue(): void {
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -98,36 +93,33 @@ class Recipe
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-
     public function getTime(): ?int
     {
         return $this->time;
     }
 
-    public function setTime(int $time): self
+    public function setTime(int $time): static
     {
         $this->time = $time;
 
         return $this;
     }
 
-
-    public function getnbPeople(): ?int 
+    public function getNbPeople(): ?int
     {
-        return $this->nbPeople;
+        return $this->nb_people;
     }
 
-
-    public function setnbPeople(?int $nbPeople): self 
+    public function setNbPeople(?int $nb_people): static
     {
-        $this->nbPeople = $nbPeople;
+        $this->nb_people = $nb_people;
 
         return $this;
     }
@@ -137,22 +129,19 @@ class Recipe
         return $this->difficulty;
     }
 
-
-    public function setDifficulty(?int $difficulty):self
+    public function setDifficulty(?int $difficulty): static
     {
         $this->difficulty = $difficulty;
 
         return $this;
     }
 
-
-
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -171,47 +160,71 @@ class Recipe
         return $this;
     }
 
-    public function isIsFavorite(): ?bool
+    public function isFavorite(): ?bool
     {
-        return $this->isFavorite;
+        return $this->is_favorite;
     }
 
-
-    public function setIsFavorite(bool $isFavorite): self
+    public function setFavorite(bool $is_favorite): static
     {
-        $this->isFavorite = $isFavorite;
+        $this->is_favorite = $is_favorite;
 
         return $this;
     }
 
-
-    public function getCreateAt(): ?\DateTimeImmutable 
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createAt;
+        return $this->createdAt;
     }
-    
 
-    public function setCreateAt(\DateTimeImmutable $createAt): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createAt = $createAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdateAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updateAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdatdAT(\DateTimeImmutable $updateAt): self
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
-        $this->updateAt = $updateAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
+    public function getIngredients() : Collection {
+        return $this->ingredients;
+    }
 
+    public function addIngredient(Ingredient $ingredient): self {
+        if (!$this->ingredients->contains($ingredient)) {
+            $this->ingredients->add($ingredient);
+        }
 
+        return $this;
+    }
+
+    public function removeIngredient(Ingredient $ingredient): self {
+        $this->ingredients->removeElement($ingredient); 
+
+        return $this; 
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
 
 
 }

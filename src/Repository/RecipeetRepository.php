@@ -1,8 +1,9 @@
 <?php
 
+// src/Repository/RecipeetRepository.php
 namespace App\Repository;
 
-use App\Entity\Recipeet;
+use App\Entity\Recipe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -13,12 +14,17 @@ class RecipeetRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Recipeet::class);
+        parent::__construct($registry, Recipe::class);
     }
 
-    //    /**
-    //     * @return Recipeet[] Returns an array of Recipeet objects
-    //     */
+
+    // Ajoutez vos méthodes personnalisées ici
+}
+
+
+       
+        
+        
     //    public function findByExampleField($value): array
     //    {
     //        return $this->createQueryBuilder('r')
@@ -40,4 +46,4 @@ class RecipeetRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-}
+
