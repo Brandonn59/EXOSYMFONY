@@ -1,11 +1,10 @@
-
-<?php
-
+<?php 
 namespace App\Controller;
 
 use App\Entity\Recipe;
 use App\Form\RecipeType;
 use App\Repository\RecipeRepository;
+use App\Repository\RecipeetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +19,7 @@ class RecipeController extends AbstractController
         /**
      * Show all recipes
      *
-     * @param RecipeRepository $recipeRepository
+     * @param RecipeetRepository $recipeRepository
      * @param PaginatorInterface $paginator
      * @param Request $request
      * @return Response
@@ -28,11 +27,11 @@ class RecipeController extends AbstractController
 
     #[Route('/recette', name: 'app_recipe', methods:['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function index(RecipeRepository $recipeRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(RecipeetRepository $recipeRepository, PaginatorInterface $paginator, Request $request): Response
     {
         
         $recipes = $paginator->paginate( 
-            $recipeRepository->findBy(['user' =>$this->getUser()]),
+            $recipeRepository->findBy(['User' =>$this->getUser()]),
             $request->query->getInt('page', 1),
             10
         );
@@ -56,7 +55,6 @@ class RecipeController extends AbstractController
 
         $recipe =new Recipe();
         $form = $this->createForm(RecipeType::class, $recipe);
-        
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             

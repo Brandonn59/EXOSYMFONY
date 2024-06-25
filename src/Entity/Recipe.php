@@ -160,16 +160,19 @@ class Recipe
         return $this;
     }
 
-    public function isFavorite(): ?bool
-    {
-        return $this->is_favorite;
-    }
+    private bool $isFavorite;
+  
 
-    public function setFavorite(bool $is_favorite): static
+    public function setisFavorite(bool $isFavorite): self
     {
-        $this->is_favorite = $is_favorite;
+        $this->isFavorite = $isFavorite;
 
         return $this;
+    }
+
+    public function getIsFavorite(): bool 
+    {
+        return $this->isFavorite;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

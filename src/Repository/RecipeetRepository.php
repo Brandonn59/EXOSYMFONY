@@ -8,7 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Recipeet>
+ * @extends ServicesEntityRepository<Recipe> </Recipe>
  */
 class RecipeetRepository extends ServiceEntityRepository
 {
