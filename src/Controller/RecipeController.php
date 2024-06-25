@@ -78,4 +78,59 @@ class RecipeController extends AbstractController
     }
 
 
+    #[Route('/recette/edition/{id}', name:'app_recipe_edit' ,methods:['GET','POST'])]
+    public function edit(RecipeetRepository $recipeRepository,int $id,Request $request,EntityManagerInterface $manager):Response
+    {
+        $recipe = $recipeRepository->findOneBy(["id" => $id]) ;
+        $form = $this->createForm(RecipeType::class, $recipe);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $recipe = $form->getData();
+
+
+            $manager->persist($recipe);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre recette a été modifiée avec succès !'
+            );
+            return $this->redirectToRoute('app_recipe');
+        }
+        return $this->render('pages/recipe/edit.html.twig',[
+            'form'=>$form->createView()
+        ]);
+    }
+
+
+
+
+    #[Route('/recette/supression/{id}', 'app_recipe_delete' , methods:['GET'])]
+    public function delete(EntityManagerInterface $manager, int $id, RecipeetRepository $ingredientRepository) : Response
+    {
+
+
+        $recipe = $ingredientRepository->findOneBy(["id"=>$id]);
+
+        if(!$recipe){
+            $this->addFlash(
+                'success',
+                "Votre recette n'a pas été trouvée !"
+            );
+
+            return $this->redirectToRoute('app_ingredient');
+        }
+
+        $manager->remove($recipe);
+        $manager->flush();
+
+
+        $this->addFlash(
+            'success',
+            'Votre recette a été supprimée avec succès !'
+        );
+
+        return $this->redirectToRoute('app_recipe');
+    }
 }
